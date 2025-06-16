@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Utilidades Gratuitas!</title>
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            background-color: #f0f2f5;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            /* Ajustado padding-top para compensar a nova barra fixa superior compacta */
+            padding: 80px 20px 120px 20px; /* Reduzido para acomodar a barra mais compacta */
+            transition: background-color .3s ease, color .3s ease;
+            position: relative;
+        }
+        /* Classe para desativar a rolagem do corpo */
+        body.no-scroll {
+            overflow: hidden;
+        }
+        /* Classe para o modo escuro */
+        body.dark-mode {
+            background-color: #2c2c2c;
+            color: #e0e0e0;
+        }
+
+        /* SOBREPOSIÇÃO PARA O MODO DE PESQUISA */
+        body.search-active::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.85); /* Fundo preto semi-transparente */
+            z-index: 999; /* Abaixo da barra flutuante (z-index: 1000) */
+            backdrop-filter: blur(3px); /* Efeito de desfoque */
+            transition: opacity 0.3s ease;
+            opacity: 1;
+        }
+        body:not(.search-active)::before {
+            opacity: 0;
+            pointer-events: none; /* Desativa interações quando invisível */
+        }
+
+        /* Oculta e desabilita interações no conteúdo principal quando a pesquisa está ativa */
+        .category-container, #add-icon-section {
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        body.search-active .category-container,
+        body.search-active #add-icon-section {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none; /* Impede cliques */
+        }
+        /* Também ocultar a barra superior quando a pesquisa está ativa */
+        body.search-active #top-fixed-bar {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+
+        /* --- Nova Barra Superior Fixa --- */
+        #top-fixed-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #ffffff; /* Fundo branco para a barra */
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); /* Sombra suave */
+            z-index: 999; /* Garante que fique acima de outros elementos */
+            padding: 5px 0; /* Espaçamento interno mais compacto */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-sizing: border-box; /* Inclui padding no width total */
+            transition: background-color .3s ease, box-shadow .3s ease;
+        }
+
+        body.dark-mode #top-fixed-bar {
+            background-color: #3a3a3a;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        /* --- Container para a barra flutuante e resultados --- */
+        #floating-bar-wrapper {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 600px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Container para os resultados rápidos */
+        #quick-results-container {
+            display: none; /* Começa escondido */
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(5px);
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 10px;
+            padding: 10px;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        body.dark-mode #quick-results-container {
+             background-color: rgba(58, 58, 58, 0.95);
+             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        #quick-results-content {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding: 5px; /* Espaço para a barra de rolagem não ficar colada */
+            -webkit-overflow-scrolling: touch; /* Suaviza rolagem em iOS */
+        }
+        
+        /* Estilo para os ícones dentro da barra de resultados rápidos */
+        .quick-result-item {
+            box-sizing: border-box; /* Garante que padding e border não aumentem o tamanho final */
+            width: 90px; /* Tamanho fixo para padronização */
+            height: 90px; /* Tamanho fixo para padronização */
+            min-width: 90px; /* Garante que não fiquem menores */
+            flex-shrink: 0;
+            flex-grow: 0;   /* Não permite que o item cresça */
+            flex-basis: auto; /* Deixa o flex-basis se ajustar com o width fixo */
+        }
+        .quick-result-item .icon-label {
+            font-size: 0.9em !important;
+        }
+        
+        .no-results-message {
+            width: 100%;
+            text-align: center;
+            padding: 15px 0;
+            color: #777;
+        }
+        body.dark-mode .no-results-message {
+            color: #bbb;
+        }
+
+        /* Barra de pesquisa em si */
+        #search-container {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            background-color: #ffffff;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: background-color .3s ease, box-shadow .3s ease;
+        }
+        body.dark-mode #search-container {
+            background-color: #3a3a3a;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        #search-input {
+            flex-grow: 1;
+            width: 100%;
+            padding: 12px 15px;
+            border: none;
+            font-size: 1.1em;
+            box-sizing: border-box;
+            background-color: transparent;
+            color: #333;
+            box-shadow: none;
+            outline: none;
+            transition: color .3s ease;
+        }
+
+        body.dark-mode #search-input {
+            color: #e0e0e0;
+        }
+
+        #theme-toggle {
+            flex-shrink: 0;
+            margin-left: 8px;
+            background-color: #004a8f;
+            color: #fff;
+            border: none;
+            border-radius: 25px;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: .8rem;
+            transition: background-color .3s ease;
+            white-space: nowrap;
+        }
+        
+        body.dark-mode #theme-toggle {
+            background-color: #555;
+        }
+        #theme-toggle:hover {
+            opacity: .8;
+        }
+        .categories {
+            display: flex;
+            flex-wrap: nowrap; /* Impede que os itens quebrem em várias linhas */
+            overflow-x: auto; /* Adiciona rolagem horizontal se necessário */
+            -webkit-overflow-scrolling: touch; /* Suaviza rolagem em iOS */
+            justify-content: flex-start; /* Alinha os itens à esquerda para rolagem */
+            gap: 3px;
+            margin-bottom: 0;
+            width: 100%;
+            padding: 0 10px;
+            box-sizing: border-box;
+        }
+        .category-button {
+            background-color: #fff;
+            color: #3c4043;
+            border: 1px solid #ccc;
+            padding: 4px 9px;
+            border-radius: 12.5px;
+            font-size: 0.7128rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all .3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,.1);
+            white-space: nowrap; /* Garante que o texto não quebre */
+            flex-shrink: 0; /* Impede que os botões encolham */
+        }
+        body.dark-mode .category-button {
+            background-color: #444;
+            color: #e0e0e0;
+            border-color: #666;
+            box-shadow: 0 2px 5px rgba(0,0,0,.3);
+        }
+        .category-button:hover {
+            background-color: #004a8f;
+            color: #fff;
+            border-color: #004a8f;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,.1);
+        }
+        body.dark-mode .category-button:hover {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .category-button.active {
+            background-color: #004a8f;
+            color: #fff;
+            border-color: #004a8f;
+            box-shadow: 0 4px 10px rgba(0,0,0,.15);
+            transform: translateY(-1px);
+        }
+        body.dark-mode .category-button.active {
+            background-color: #007bff;
+            border-color: #007bff;
+            box-shadow: 0 4px 10px rgba(0,0,0,.25);
+        }
+        /* Estilo para o botão "Digite Aqui" (também ajustado) */
+        #quick-search-trigger {
+            background-color: #007bff; /* Cor primária */
+            color: #fff;
+            border: 1px solid #007bff;
+            padding: 4px 9px;
+            border-radius: 12.5px;
+            font-size: 0.7128rem; /* Ajustado para 10% a mais */
+            font-weight: 500;
+            cursor: pointer;
+            transition: all .3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,.1);
+            white-space: nowrap;
+        }
+        body.dark-mode #quick-search-trigger {
+            background-color: #0056b3;
+            border-color: #0056b3;
+            box-shadow: 0 2px 5px rgba(0,0,0,.3);
+        }
+        #quick-search-trigger:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,.1);
+        }
+        body.dark-mode #quick-search-trigger:hover {
+            background-color: #004a8f;
+            border-color: #004a8f;
+        }
+
+        .category-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto 30px auto;
+            width: 100%;
+        }
+        .color-category {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 25px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s, display 0.3s;
+            border-top: 5px solid;
+        }
+        body.dark-mode .color-category {
+            background-color: #3a3a3a;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        .color-category:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+        body.dark-mode .color-category:hover {
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+        .color-category h2 {
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 25px;
+            font-size: 1.8em;
+            color: #0056b3;
+            border-bottom: 2px solid rgba(0, 0, 0, 0.05);
+            padding-bottom: 10px;
+        }
+        body.dark-mode .color-category h2 {
+            color: #007bff;
+            border-bottom-color: rgba(255, 255, 255, 0.1);
+        }
+        /* Ajuste para sempre 3 colunas em mobile e auto-adaptável para tablets/PCs */
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); /* Adapta-se automaticamente com tamanho mínimo de 100px */
+            gap: 15px;
+            justify-items: center;
+        }
+        .icon-item {
+            box-sizing: border-box; /* Garante que padding e border não aumentem o tamanho final */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,.1);
+            text-decoration: none;
+            color: #fff;
+            overflow: hidden;
+            transition: transform .2s ease-in-out, opacity .3s ease, background-color .3s ease;
+            width: 100px; /* Tamanho fixo para padronização */
+            height: 100px; /* Tamanho fixo para padronização */
+            min-width: 100px; /* Garante que não fiquem menores */
+            aspect-ratio: 1 / 1;
+            position: relative;
+            opacity: 1; /* Default visible state */
+            transform: translateY(0); /* Default visible state */
+        }
+        /* Classes para controle de visibilidade via JS */
+        .icon-item.hidden {
+            opacity: 0;
+            transform: scale(0.8);
+            pointer-events: none;
+            height: 0;
+            width: 0;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            transition: transform 0.3s ease, opacity 0.3s ease, width 0.3s ease, height 0.3s ease, margin 0.3s ease, padding 0.3s ease;
+        }
+        .icon-item.showing {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+            pointer-events: auto;
+        }
+
+        body.dark-mode .icon-item {
+            box-shadow: 0 2px 5px rgba(0,0,0,.3);
+        }
+        .icon-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0,0,0,.15);
+        }
+        body.dark-mode .icon-item:hover {
+            box-shadow: 0 4px 10px rgba(0,0,0,.4);
+        }
+        .icon-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+        }
+        .icon-label {
+            font-size: 0.9em;
+            text-align: center;
+            padding: 5px;
+            word-break: break-word;
+            font-weight: bold;
+            line-height: 1.2;
+        }
+        /* Cores de ícones (do segundo trecho, mantidas e mescladas) */
+        .verde { background-color: #4caf50; } .AZUL { background-color: #2d8cff; } .azul2 { background-color: #007bff; } .verde2 { background-color: #00995d; } .codepen { background-color: #000; } .utilit { background-color: #4285f4; } .wordpress { background-color: #21759b; } .mercadolivre { background-color: #ffe600; color: #000; } .mega { background-color: #d90000; } .zoom { background-color: #2d8cff; } .cuponomia { background-color: #f26522; } .bradesco { background-color: #ee1c23; } .senai { background-color: #004a8f; } .primecursos { background-color: #f9a825; color: #000; } .baixar { background-color: #4caf50; } .canais { background-color: #f44336; } .canva { background-color: #1e1e1e; } .coelba { background-color: #00a99d; } .concursos { background-color: #673ab7; } .drive { background-color: #4285f4; } .clideo { background-color: #593993; } .embasa { background-color: #03a9f4; } .multicanaislc { background-color: #29abe2; } .onedrive { background-color: #0078d4; } .globfone { background-color: #00bcd4; } .youtube0, .youtube1 { background-color: #ff0000; } .cartacapital { background-color: #c62828; } .iconicons { background-color: #3f51b5; } .pinterest { background-color: #e60023; } .logodownload { background-color: #000; } .icons8 { background-color: #00a4e5; } .gratispng { background-color: #8bc34a; } .linkcorreios { background-color: #fdd835; color: #000; } .photoroom { background-color: #6c63ff; } .topflix { background-color: #212121; } .tsunami { background-color: #0078d4; } .meuguia { background-color: #9c27b0; } .unopar { background-color: #0070c0; } .clideoaudio { background-color: #593993; } .azarado { background-color: #ff9800; color: #000; } .feriados { background-color: #f44336; } .mercadopago { background-color: #00aee4; } .musclewiki { background-color: #004a8f; } .buscape { background-color: #673ab7; } .bloqueador { background-color: #d90000; } .vpn { background-color: #D81B60; } .gov-curso { background-color: #006400; } .whatsapp { background-color: #25d366; } .plutotv { background-color: #121212; }
+        .copilot-icon {
+            background-image: linear-gradient(to bottom right,#2196F3,#4CAF50,#FFEB3B,#FF9800,#9C27B0);
+        }
+        /* Custom icon color class for dynamically added icons, if not using a predefined class */
+        .custom-icon-color .icon-content {
+            background-color: var(--icon-background-color);
+        }
+
+        /* Estilos para o formulário de adição de ícone */
+        #add-icon-section {
+            width: 90%;
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 25px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            border-top: 5px solid #007bff;
+            transition: background-color .3s ease, border-top-color .3s ease, box-shadow .3s ease;
+        }
+        body.dark-mode #add-icon-section {
+            background-color: #3a3a3a;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            border-top-color: #0056b3;
+        }
+        #add-icon-section h2 {
+            text-align: center;
+            color: #0056b3;
+            margin-top: 0;
+            margin-bottom: 25px;
+            font-size: 1.8em;
+            border-bottom: 2px solid rgba(0,0,0,0.05);
+            padding-bottom: 10px;
+            transition: color .3s ease, border-bottom-color .3s ease;
+        }
+        body.dark-mode #add-icon-section h2 {
+            color: #007bff;
+            border-bottom-color: rgba(255,255,255,0.1);
+        }
+        .form-group {
+            margin-bottom: 18px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: #333;
+            transition: color .3s ease;
+        }
+        body.dark-mode .form-group label {
+            color: #e0e0e0;
+        }
+        .form-group input[type="text"],
+        .form-group input[type="url"],
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 1em;
+            background-color: #fff;
+            color: #333;
+            transition: border-color .3s ease, background-color .3s ease, color .3s ease;
+        }
+        body.dark-mode .form-group input[type="text"],
+        body.dark-mode .form-group input[type="url"],
+        body.dark-mode .form-group select {
+            background-color: #3c3c3c;
+            border-color: #555;
+            color: #e0e0e0;
+        }
+        .form-group input[type="color"] {
+            width: 100%;
+            padding: 5px;
+            height: 45px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+            cursor: pointer;
+            background-color: #fff;
+            transition: border-color .3s ease, background-color .3s ease;
+        }
+        body.dark-mode .form-group input[type="color"] {
+            border-color: #555;
+            background-color: #3c3c3c;
+        }
+        #add-icon-button {
+            width: 100%;
+            padding: 12px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color .3s ease;
+            font-weight: 500;
+        }
+        #add-icon-button:hover {
+            background-color: #0056b3;
+        }
+        body.dark-mode #add-icon-button {
+            background-color: #0056b3;
+        }
+        body.dark-mode #add-icon-button:hover {
+            background-color: #004a8f;
+        }
+        .label-hint {
+            font-size: 0.85em;
+            color: #777;
+            font-weight: 400;
+        }
+        body.dark-mode .label-hint {
+            color: #bbb;
+        }
+
+        /* Media Queries para responsividade */
+        @media (max-width: 768px) { /* Celulares e telas menores */
+            .category-container {
+                grid-template-columns: 1fr;
+            }
+            .color-category {
+                padding: 15px; /* Padding um pouco reduzido */
+            }
+            .color-category h2 {
+                font-size: 1.4em; /* Títulos menores */
+            }
+            .links-grid {
+                grid-template-columns: repeat(3, 1fr); /* Força 3 colunas iguais */
+                gap: 10px; /* Espaçamento menor */
+            }
+            .icon-item {
+                width: 90px; /* Tamanho fixo para todos os ícones em mobile */
+                height: 90px; /* Tamanho fixo para todos os ícones em mobile */
+                min-width: 90px; /* Garante que não fiquem menores */
+                max-width: 90px; /* Garante que não fiquem maiores */
+            }
+            /* Ajusta os itens na barra de resultados rápidos para mobile */
+            .quick-result-item {
+                width: 90px !important; /* Tamanho fixo para todos os resultados rápidos em mobile */
+                height: 90px !important; /* Tamanho fixo para todos os resultados rápidos em mobile */
+                min-width: 90px;
+                max-width: 90px;
+                flex-basis: auto; /* Deixa flex-basis adaptar */
+            }
+            .icon-label, .quick-result-item .icon-label {
+                font-size: 0.75em !important; /* Fonte menor para os rótulos dos ícones */
+            }
+            #add-icon-section {
+                padding: 15px;
+            }
+            #add-icon-section h2 {
+                font-size: 1.4em;
+            }
+            #quick-results-content {
+                gap: 10px; /* Garante o mesmo gap para resultados rápidos */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="top-fixed-bar">
+        <nav class="categories">
+            <button id="quick-search-trigger" class="category-button active" data-category="all">Digite Aqui</button>
+            <button class="category-button" data-category="cursos-concursos">Cursos & Concursos</button>
+            <button class="category-button" data-category="ferramentas-downloads">Ferramentas & Downloads</button>
+            <button class="category-button" data-category="compras-produtividade">Compras & Produtividade</button>
+            <button class="category-button" data-category="design-audio">Design & Áudio</button>
+            <button class="category-button" data-category="midia-entretenimento">Mídia & Entretenimento</button>
+        </nav>
+    </div>
+
+    <div class="category-container" id="allCategoriesGrid">
+        <div class="color-category" style="border-color: #6f42c1;" data-category="servicos-utilidades">
+            <h2>Serviços & Utilidades</h2>
+            <div class="links-grid">
+                <a href="https://musclewiki.com/pt-br/" class="icon-item musclewiki" data-label="MuscleWiki">
+                    <div class="icon-content">
+                        <div class="icon-label">Academia</div>
+                    </div>
+                </a>
+                <a href="https://web.whatsapp.com/" class="icon-item whatsapp" data-label="Web WhatsApp">
+                    <div class="icon-content">
+                        <div class="icon-label">WhatsApp</div>
+                    </div>
+                </a>
+                <a href="http://138.255.240.6:8000/accounts/central/login" class="icon-item tsunami" data-label="Tsunami">
+                    <div class="icon-content">
+                        <div class="icon-label">Tsunami</div>
+                    </div>
+                </a>
+                <a href="https://api.whatsapp.com/send?phone=557197170999&text=MENU" class="icon-item AZUL" data-label="Segunda Via de Água">
+                    <div class="icon-content">
+                        <div class="icon-label">Segunda Via de Água</div>
+                    </div>
+                </a>
+                <a href="https://api.whatsapp.com/send?phone=557133706350&text=MENU" class="icon-item verde" data-label="Segunda Via de Luz">
+                    <div class="icon-content">
+                        <div class="icon-label">Segunda Via de Luz</div>
+                    </div>
+                </a>
+                <a href="https://www.urban-vpn.com/pt-br/" class="icon-item vpn" data-label="vpn">
+                    <div class="icon-content">
+                        <div class="icon-label">VPN</div>
+                    </div>
+                </a>
+                <a href="https://chromewebstore.google.com/detail/ublock-origin-lite/ddkjiahejlhfcafbddmgiahcphecmpfh?hl=pt-BR" class="icon-item bloqueador" data-label="bloqueador">
+                    <div class="icon-content">
+                        <div class="icon-label">Bloquear Anúncios</div>
+                    </div>
+                </a>
+                 <a href="https://feriados.site/ba/saubara/" class="icon-item feriados" data-label="Feriados">
+                    <div class="icon-content">
+                        <div class="icon-label">Feriados</div>
+                    </div>
+                </a>
+                <a href="https://atendimentovirtual.embasa.ba.gov.br/login" class="icon-item embasa" data-label="Embasa">
+                    <div class="icon-content">
+                        <div class="icon-label">Embasa</div>
+                    </div>
+                </a>
+                <a href="https://servicos.neoenergiacoelba.com.br/area-logada/Paginas/login.aspx?ref=https://servicos.neoenergiacoelba.com.br/servicos-ao-cliente/Pages/2-via-de-conta-coelba.aspx" class="icon-item coelba" data-label="Coelba">
+                    <div class="icon-content">
+                        <div class="icon-label">Coelba</div>
+                    </div>
+                </a>
+                <a href="https://sso.acesso.gov.br/" class="icon-item azul2" data-label="Gov.br">
+                    <div class="icon-content">
+                        <div class="icon-label">Gov.br</div>
+                    </div>
+                </a>
+                <a href="https://www.linkcorreios.com.br/index.php" class="icon-item linkcorreios" data-label="Link Correios">
+                    <div class="icon-content">
+                        <div class="icon-label">Link Correios</div>
+                    </div>
+                </a>
+                <a href="https://meu.inss.gov.br/" class="icon-item verde2" data-label="Meu INSS">
+                    <div class="icon-content">
+                        <div class="icon-label">Meu INSS</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="color-category" style="border-color: #28a745;" data-category="cursos-concursos">
+            <h2>Cursos & Concursos</h2>
+            <div class="links-grid">
+                <a href="https://avamec.mec.gov.br/#/curso/listar?idCategoria=0" class="icon-item gov-curso" data-label="AVAMEC">
+                    <div class="icon-content">
+                        <div class="icon-label">AVAMEC CURSOS</div>
+                    </div>
+                </a>
+                <a href="https://www.escolavirtual.gov.br/catalogo" class="icon-item gov-curso" data-label="Escola Virtual GOV">
+                    <div class="icon-content">
+                        <div class="icon-label">Escola Virtual</div>
+                    </div>
+                </a>
+                <a href="https://aprendamais.mec.gov.br/course/index.php" class="icon-item gov-curso" data-label="Aprenda Mais">
+                    <div class="icon-content">
+                        <div class="icon-label">Aprenda Mais</div>
+                    </div>
+                </a>
+<a href="https://www.pciconcursos.com.br/concursos/#BA" class="icon-item concursos" data-label="PCI Concurso">
+                    <div class="icon-content">
+                        <div class="icon-label">PCI Concurso</div>
+                    </div>
+                </a>
+                <a href="https://concursosnobrasil.com/concursos/ba/" class="icon-item concursos" data-label="Concursos Brasil">
+                    <div class="icon-content">
+                        <div class="icon-label">Brasil Concurso</div>
+                    </div>
+                </a>
+                 <a href="https://www.acheconcursos.com.br/concursos-bahia" class="icon-item concursos" data-label="Ache Concursos">
+                    <div class="icon-content">
+                        <div class="icon-label">Ache Concurso</div>
+                    </div>
+                </a>
+                <a href="https://www.futuro.digital/cursos-gratuitos" class="icon-item senai" data-label="Senai">
+                    <div class="icon-content">
+                        <div class="icon-label">Senai Cursos</div>
+                    </div>
+                </a>
+                <a href="https://www.primecursos.com.br/" class="icon-item primecursos" data-label="Prime Cursos">
+                    <div class="icon-content">
+                        <div class="icon-label">Prime Cursos</div>
+                    </div>
+                </a>
+                <a href="https://www.colaboraread.com.br/aluno/dashboard/index?matriculaId=3602038005" class="icon-item unopar" data-label="Unopar">
+                    <div class="icon-content">
+                        <div class="icon-label">Unopar</div>
+                    </div>
+                </a>
+                <a href="https://www.ev.org.br/" class="icon-item bradesco" data-label="Bradesco">
+                    <div class="icon-content">
+                        <div class="icon-label">Bradesco Cursos</div>
+                    </div>
+                </a>
+                
+            </div>
+        </div>
+
+        <div class="color-category" style="border-color: #007bff;" data-category="ferramentas-downloads">
+            <h2>Ferramentas & Downloads</h2>
+            <div class="links-grid">
+                <a href="https://www.zoom.com.br/" class="icon-item zoom" data-label="Zoom">
+                    <div class="icon-content">
+                        <div class="icon-label">Zoom</div>
+                    </div>
+                </a>
+                <a href="https://drive.google.com/drive/u/0/my-drive?fd=true" class="icon-item drive" data-label="Drive">
+                    <div class="icon-content">
+                        <div class="icon-label">Drive</div>
+                    </div>
+                </a>
+                <a href="https://onedrive.live.com/?id=root&cid=6DB96A6307BA3A1C" class="icon-item onedrive" data-label="OneDrive">
+                    <div class="icon-content">
+                        <div class="icon-label">OneDrive</div>
+                    </div>
+                </a>
+                <a href="https://yt5s.in/pt257mm/youtube-to-mp4" class="icon-item baixar" data-label="Baixar Videos">
+                    <div class="icon-content">
+                        <div class="icon-label">Baixar</div>
+                    </div>
+                </a>
+                <a href="https://www.fosshub.com" class="icon-item azarado" data-label="FossHub"> <div class="icon-content">
+                        <div class="icon-label">FossHub</div>
+                    </div>
+                </a>
+                <a href="https://github.com/camilatigre/listamaravilhosaopensource" class="icon-item codepen" data-label="GitHub OpenSource Lista"> <div class="icon-content">
+                        <div class="icon-label">GitHub Lista OS</div>
+                    </div>
+                </a>
+                <a href="https://github.com/ishanvyas22/awesome-open-source-systems" class="icon-item codepen" data-label="Awesome Open Source Systems"> <div class="icon-content">
+                        <div class="icon-label">Awesome OS</div>
+                    </div>
+                </a>
+                <a href="https://www.softpedia.com" class="icon-item azul2" data-label="Softpedia"> <div class="icon-content">
+                        <div class="icon-label">Softpedia</div>
+                    </div>
+                </a>
+                <a href="https://mega.nz" class="icon-item mega" data-label="Mega">
+                    <div class="icon-content">
+                        <div class="icon-label">Mega</div>
+                    </div>
+                </a>
+                <a href="https://sourceforge.net" class="icon-item utilit" data-label="SourceForge"> <div class="icon-content">
+                        <div class="icon-label">SourceForge</div>
+                    </div>
+                </a>
+                <a href="https://osdn.net" class="icon-item verde2" data-label="OSDN"> <div class="icon-content">
+                        <div class="icon-label">OSDN</div>
+                    </div>
+                </a>
+                <a href="https://logodownload.org/" class="icon-item logodownload" data-label="Logo Download">
+                    <div class="icon-content">
+                        <div class="icon-label">Logo Download</div>
+                    </div>
+                </a>
+                <a href="https://codepen.io/pen/" class="icon-item codepen" data-label="Codepen">
+                    <div class="icon-content">
+                        <div class="icon-label">Codepen</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="color-category" style="border-color: #fd7e14;" data-category="compras-produtividade">
+            <h2>Compras & Produtividade</h2>
+            <div class="links-grid">
+                <a href="https://mercadolivre.com.br" class="icon-item mercadolivre" data-label="Mercado Livre">
+                    <div class="icon-content">
+                        <div class="icon-label">Mercado Livre</div>
+                    </div>
+                </a>
+                <a href="https://shopee.com.br/?uls_trackid=52t1gigt0064&utm_campaign=id_Y9ixAtyxay&utm_content=-ofasdbrshopeeshopeesddef---&utm_medium=affiliates&utm_source=an_18114130006&utm_term=d59sch2ft855" class="icon-item cuponomia" data-label="Shopee">
+                    <div class="icon-content">
+                        <div class="icon-label">Shopee</div>
+                    </div>
+                </a>
+                <a href="https://kabum.com.br" class="icon-item custom-icon-color" data-label="Kabum">
+                    <div class="icon-content" style="--icon-background-color: #f27107; background-color: var(--icon-background-color);">
+                        <div class="icon-label">Kabum</div>
+                    </div>
+                </a>
+                <a href="https://magazineluiza.com.br" class="icon-item custom-icon-color" data-label="Magazineluiza">
+                    <div class="icon-content" style="--icon-background-color: #fd7e14; background-color: var(--icon-background-color);">
+                        <div class="icon-label">Magazine Luiza</div>
+                    </div>
+                </a>
+                <a href="Https://br.shein.com" class="icon-item custom-icon-color" data-label="Shein">
+                    <div class="icon-content" style="--icon-background-color: #f27107; background-color: var(--icon-background-color);">
+                        <div class="icon-label">Shein</div>
+                    </div>
+                </a>
+                <a href="https://pt.aliexpress.com" class="icon-item custom-icon-color" data-label="Aliexpress">
+                    <div class="icon-content" style="--icon-background-color: #f27107; background-color: var(--icon-background-color);">
+                        <div class="icon-label">Aliexpress</div>
+                    </div>
+                </a>
+                <a href="https://www.cuponomia.com.br/" class="icon-item cuponomia" data-label="Cuponomia">
+                    <div class="icon-content">
+                        <div class="icon-label">Cupons Compras</div>
+                    </div>
+                </a>
+                <a href="https://mercadopago.com.br" class="icon-item mercadopago" data-label="Mercado Pago">
+                    <div class="icon-content">
+                        <div class="icon-label">Mercado Pago</div>
+                    </div>
+                </a>
+                <a href="https://buscape.com.br" class="icon-item buscape" data-label="Buscape">
+                    <div class="icon-content">
+                        <div class="icon-label">Buscape</div>
+                    </div>
+                </a>
+                <a href="https://play.mercadolivre.com.br/?origin=internal" class="icon-item mercadolivre" data-label="Mercado Play">
+                    <div class="icon-content">
+                        <div class="icon-label">Mercado Play</div>
+                    </div>
+                </a>
+                <a href="https://gemini.google.com/app?hl=pt-BR" class="icon-item photoroom" data-label="Gemini AI"> <div class="icon-content">
+                        <div class="icon-label">Gemini</div>
+                    </div>
+                </a>
+                <a href="https://copilot.microsoft.com/" class="icon-item copilot-icon" data-label="Copilot AI">
+                    <div class="icon-content">
+                        <div class="icon-label">Copilot</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="color-category" style="border-color: #ffc107;" data-category="design-audio">
+            <h2>Design & Áudio</h2>
+            <div class="links-grid">
+                <a href="https://www.canva.com/pt_br/modelos/?category=tAEoFqaPb84&fFormat=MV8&pricing=FREE" class="icon-item canva" data-label="Canva">
+                    <div class="icon-content">
+                        <div class="icon-label">Canva</div>
+                    </div>
+                </a>
+                <a href="https://icon-icons.com/" class="icon-item iconicons" data-label="Iconicons">
+                    <div class="icon-content">
+                        <div class="icon-label">Iconicons</div>
+                    </div>
+                </a>
+                <a href="https://icons8.com.br/" class="icon-item icons8" data-label="Icons8">
+                    <div class="icon-content">
+                        <div class="icon-label">Icons8</div>
+                    </div>
+                </a>
+                <a href="https://www.gratispng.com/" class="icon-item gratispng" data-label="Grátis PNG">
+                    <div class="icon-content">
+                        <div class="icon-label">Grátis PNG</div>
+                    </div>
+                </a>
+                <a href="https://www.photoroom.com/pt-br/ferramentas/remover-fundo-de-imagem" class="icon-item photoroom" data-label="Photoroom Remove Fundo">
+                    <div class="icon-content">
+                        <div class="icon-label">Remove Fundo</div>
+                    </div>
+                </a>
+                <a href="https://clideo.com/pt" class="icon-item clideo" data-label="Clideo Video Editor">
+                    <div class="icon-content">
+                        <div class="icon-label">Clideo</div>
+                    </div>
+                </a>
+                <a href="https://clideo.com/pt/cut-audio" class="icon-item clideoaudio" data-label="Clideo Audio Cutter">
+                    <div class="icon-content">
+                        <div class="icon-label">Corte Áudio</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="color-category" style="border-color: #dc3545;" data-category="midia-entretenimento">
+            <h2>Mídia & Entretenimento</h2>
+            <div class="links-grid">
+                <a href="https://music.youtube.com/" class="icon-item youtube0" data-label="YouTube Music">
+                    <div class="icon-content">
+                        <div class="icon-label">YouTube Music</div>
+                    </div>
+                </a>
+                <a href="https://YouTube.com.br" class="icon-item youtube1" data-label="YouTube">
+                    <div class="icon-content">
+                        <div class="icon-label">YouTube</div>
+                    </div>
+                </a>
+                <a href="https://br.pinterest.com/" class="icon-item pinterest" data-label="Pinterest">
+                    <div class="icon-content">
+                        <div class="icon-label">Pinterest</div>
+                    </div>
+                </a>
+                <a href="https://pluto.tv/" class="icon-item plutotv" data-label="Pluto TV">
+                    <div class="icon-content">
+                        <div class="icon-label">Pluto TV</div>
+                    </div>
+                </a>
+                <a href="https://m.topflix.sh/genero/" class="icon-item topflix" data-label="TopFlix">
+                    <div class="icon-content">
+                        <div class="icon-label">Topflix</div>
+                    </div>
+                </a>
+                <a href="https://meuguia.tv/programacao/categoria/Filmes" class="icon-item meuguia" data-label="Meu Guia TV">
+                    <div class="icon-content">
+                        <div class="icon-label">Guia TV</div>
+                    </div>
+                </a>
+                <a href="https://www.azarado.com.br" class="icon-item azarado" data-label="Azarado Loterias">
+                    <div class="icon-content">
+                        <div class="icon-label">Azarado</div>
+                    </div>
+                </a>
+                <a href="https://www.cartacapital.com.br/" class="icon-item cartacapital" data-label="CartaCapital">
+                    <div class="icon-content">
+                        <div class="icon-label">Carta Capital</div>
+                    </div>
+                </a>
+                <a href="https://globfone.com/call-phone/" class="icon-item globfone" data-label="Globfone">
+                    <div class="icon-content">
+                        <div class="icon-label">Globfone</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Formulário para adicionar novos ícones -->
+    <div id="add-icon-section">
+        <h2>Adicionar Novo Ícone</h2>
+        <form id="add-icon-form">
+            <div class="form-group">
+                <label for="iconNameInput">Texto do Ícone:</label>
+                <input type="text" id="iconNameInput" required>
+            </div>
+            <div class="form-group">
+                <label for="iconLinkInput">Link do Ícone (URL):</label>
+                <input type="url" id="iconLinkInput" required>
+            </div>
+            <div class="form-group">
+                <label for="iconColorClassInput">Classe da Cor <span class="label-hint">(ex: verde, azul2 ou deixe em branco para cor customizada)</span></label>
+                <input type="text" id="iconColorClassInput">
+            </div>
+            <div class="form-group">
+                <label for="iconCustomBgColorInput">Cor de Fundo Customizada <span class="label-hint">(ignorado se classe de cor preenchida)</span></label>
+                <input type="color" id="iconCustomBgColorInput" value="#cccccc">
+            </div>
+            <div class="form-group">
+                <label for="iconCategorySelect">Categoria:</label>
+                <select id="iconCategorySelect" required>
+                    <option value="" disabled selected>Selecione uma categoria</option>
+                    <option value="servicos-utilidades">Serviços & Utilidades</option>
+                    <option value="cursos-concursos">Cursos & Concursos</option>
+                    <option value="ferramentas-downloads">Ferramentas & Downloads</option>
+                    <option value="compras-produtividade">Compras & Produtividade</option>
+                    <option value="design-audio">Design & Áudio</option>
+                    <option value="midia-entretenimento">Mídia & Entretenimento</option>
+                </select>
+            </div>
+            <button type="submit" id="add-icon-button">Adicionar Ícone</button>
+        </form>
+    </div>
+
+    <!-- Container flutuante que engloba a barra de resultados e a de pesquisa -->
+    <div id="floating-bar-wrapper">
+        <div id="quick-results-container">
+            <div id="quick-results-content"></div>
+        </div>
+        <div id="search-container">
+            <input type="text" id="search-input" placeholder="Pesquise Aqui...">
+            <button id="theme-toggle">Modo Escuro</button>
+        </div>
+    </div>
+    
+    <script>
+        const searchInput = document.getElementById('search-input');
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.body;
+        const allCategoryDivs = document.querySelectorAll('.color-category');
+        const allCategoriesGrid = document.getElementById('allCategoriesGrid');
+        const categoryButtons = document.querySelectorAll('.category-button');
+        
+        const quickResultsContainer = document.getElementById('quick-results-container');
+        const quickResultsContent = document.getElementById('quick-results-content');
+        const quickSearchTrigger = document.getElementById('quick-search-trigger');
+
+        const addIconForm = document.getElementById('add-icon-form');
+        const iconNameInput = document.getElementById('iconNameInput');
+        const iconLinkInput = document.getElementById('iconLinkInput');
+        const iconColorClassInput = document.getElementById('iconColorClassInput');
+        const iconCustomBgColorInput = document.getElementById('iconCustomBgColorInput');
+        const iconCategorySelect = document.getElementById('iconCategorySelect');
+
+        let currentActiveCategory = 'all'; 
+        let typingTimer;
+        const doneTypingInterval = 200; //ms
+
+        /**
+         * Aplica o tema salvo no localStorage ou o tema padrão.
+         */
+        function applyTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                body.classList.add('dark-mode');
+                themeToggle.textContent = 'Modo Claro';
+            } else {
+                body.classList.remove('dark-mode');
+                themeToggle.textContent = 'Modo Escuro';
+            }
+        }
+
+        /**
+         * Alterna entre o modo claro e escuro e salva a preferência no localStorage.
+         */
+        function toggleTheme() {
+            body.classList.toggle('dark-mode');
+            if (body.classList.contains('dark-mode')) {
+                localStorage.setItem('theme', 'dark');
+                themeToggle.textContent = 'Modo Claro';
+            } else {
+                localStorage.setItem('light');
+                themeToggle.textContent = 'Modo Escuro';
+            }
+        }
+
+        /**
+         * Filtra os ícones na grade principal com base no termo de pesquisa e na categoria ativa.
+         */
+        function filterLinks() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+
+            allCategoryDivs.forEach(categoryDiv => {
+                const categoryDivName = categoryDiv.getAttribute('data-category');
+                let hasVisibleLinksInCategory = false;
+
+                const linksInThisCategory = categoryDiv.querySelectorAll('.icon-item');
+                linksInThisCategory.forEach(item => {
+                    const label = item.dataset.label ? item.dataset.label.toLowerCase() : '';
+                    const matchesSearch = label.includes(searchTerm);
+                    const matchesCategoryFilter = (currentActiveCategory === 'all' || categoryDivName === currentActiveCategory);
+
+                    if (matchesSearch && matchesCategoryFilter) {
+                        item.classList.remove('hidden');
+                        item.classList.add('showing');
+                        hasVisibleLinksInCategory = true;
+                    } else {
+                        item.classList.remove('showing');
+                        item.classList.add('hidden');
+                    }
+                });
+
+                if (hasVisibleLinksInCategory || (categoryDivName === 'servicos-utilidades' && currentActiveCategory === 'all' && searchTerm === '')) {
+                    categoryDiv.style.display = 'block';
+                } else {
+                    categoryDiv.style.display = 'none';
+                }
+            });
+        }
+        
+        /**
+         * Atualiza a barra de resultados rápidos com ícones correspondentes ao termo de pesquisa.
+         * @param {string} searchTerm - O termo de pesquisa atual.
+         */
+        function updateQuickResults(searchTerm) {
+            quickResultsContent.innerHTML = ''; // Limpa resultados anteriores
+
+            if (searchTerm.length === 0) {
+                quickResultsContainer.style.display = 'none';
+                body.classList.remove('no-scroll'); // Reativa a rolagem
+                body.classList.remove('search-active'); // Remove a sobreposição preta
+                return;
+            }
+            
+            quickResultsContainer.style.display = 'block';
+            body.classList.add('no-scroll'); // Desativa a rolagem
+            body.classList.add('search-active'); // Adiciona a sobreposição preta
+
+            let found = false;
+            // Seleciona todos os ícones da grade principal (incluindo os potencialmente escondidos pelo filtro de categoria)
+            const allIcons = document.querySelectorAll('#allCategoriesGrid .icon-item');
+
+            allIcons.forEach(item => {
+                const label = item.dataset.label ? item.dataset.label.toLowerCase() : '';
+                if (label.includes(searchTerm)) {
+                    const clone = item.cloneNode(true);
+                    clone.classList.remove('hidden');
+                    clone.classList.remove('showing');
+                    clone.classList.add('quick-result-item');
+                    quickResultsContent.appendChild(clone);
+                    found = true;
+                }
+            });
+
+            if (!found) {
+                quickResultsContent.innerHTML = '<p class="no-results-message">Nenhum ícone encontrado.</p>';
+            }
+        }
+
+        /**
+         * Lida com o clique nos botões de categoria.
+         * @param {Event} event - O evento de clique.
+         */
+        function handleCategoryClick(event) {
+            categoryButtons.forEach(button => button.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            currentActiveCategory = event.currentTarget.getAttribute('data-category');
+            
+            // Se o botão clicado for "Digite Aqui", foca na barra de pesquisa e ativa a sobreposição
+            if (event.currentTarget.id === 'quick-search-trigger') {
+                searchInput.focus();
+                // Quando o "Digite Aqui" é clicado, garantimos que todas as categorias são visíveis.
+                allCategoryDivs.forEach(categoryDiv => {
+                    categoryDiv.style.display = 'block';
+                });
+            } else {
+                // Se for outro botão de categoria, limpa a pesquisa e desativa a sobreposição
+                searchInput.value = ''; // Limpa o campo de pesquisa
+                quickResultsContainer.style.display = 'none'; // Esconde os resultados rápidos
+                body.classList.remove('no-scroll'); // Reativa a rolagem
+                body.classList.remove('search-active'); // Remove a sobreposição preta
+
+                // Quando outra categoria é clicada, filtra e esconde as que não correspondem
+                allCategoryDivs.forEach(categoryDiv => {
+                    const categoryDivName = categoryDiv.getAttribute('data-category');
+                    if (categoryDivName === currentActiveCategory) {
+                        categoryDiv.style.display = 'block';
+                    } else {
+                        categoryDiv.style.display = 'none';
+                    }
+                });
+            }
+            
+            filterLinks();
+            updateQuickResults(searchInput.value.toLowerCase().trim());
+        }
+
+        /**
+         * Rola a página para o topo da grade de categorias quando a barra de pesquisa recebe foco.
+         */
+        function handleSearchFocus() {
+            setTimeout(() => {
+                allCategoriesGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 300);
+            body.classList.add('search-active'); // Ativa a sobreposição preta ao focar
+            body.classList.add('no-scroll'); // Desativa a rolagem
+
+            // Quando o input de pesquisa é focado, garantimos que todas as categorias são visíveis.
+            allCategoryDivs.forEach(categoryDiv => {
+                categoryDiv.style.display = 'block';
+            });
+        }
+        
+        // --- Event Listeners ---
+        themeToggle.addEventListener('click', toggleTheme);
+        
+        searchInput.addEventListener('input', () => {
+            clearTimeout(typingTimer);
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            typingTimer = setTimeout(() => {
+                filterLinks();
+                updateQuickResults(searchTerm);
+            }, doneTypingInterval);
+        });
+
+        searchInput.addEventListener('focus', handleSearchFocus);
+        
+        searchInput.addEventListener('blur', () => {
+            setTimeout(() => {
+                // Se o campo de busca estiver vazio ao perder o foco, esconde os resultados rápidos e remove a sobreposição
+                if(searchInput.value.trim().length === 0) {
+                    quickResultsContainer.style.display = 'none';
+                    body.classList.remove('no-scroll');
+                    body.classList.remove('search-active');
+                    // E se o botão ativo for "Digite Aqui", mostra todas as categorias novamente.
+                    if (quickSearchTrigger.classList.contains('active')) {
+                         allCategoryDivs.forEach(categoryDiv => {
+                            categoryDiv.style.display = 'block';
+                        });
+                    }
+                }
+            }, 200);
+        });
+
+        categoryButtons.forEach(button => {
+            button.addEventListener('click', handleCategoryClick);
+        });
+
+        // Event listener para o formulário de adição de ícone
+        addIconForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const name = iconNameInput.value.trim();
+            const link = iconLinkInput.value.trim();
+            const colorClass = iconColorClassInput.value.trim();
+            const customBgColor = iconCustomBgColorInput.value;
+            const category = iconCategorySelect.value;
+
+            if (!name || !link || !category) {
+                console.error('Por favor, preencha todos os campos obrigatórios: Nome, Link e Categoria.');
+                return;
+            }
+
+            const newIcon = document.createElement('a');
+            newIcon.href = link;
+            newIcon.classList.add('icon-item');
+            newIcon.dataset.label = name;
+
+            if (colorClass) {
+                newIcon.classList.add(colorClass);
+            } else {
+                newIcon.classList.add('custom-icon-color');
+                newIcon.style.setProperty('--icon-background-color', customBgColor);
+            }
+
+            const iconContent = document.createElement('div');
+            iconContent.classList.add('icon-content');
+
+            const iconLabel = document.createElement('div');
+            iconLabel.classList.add('icon-label');
+            iconLabel.textContent = name;
+
+            iconContent.appendChild(iconLabel);
+            newIcon.appendChild(iconContent);
+
+            const targetCategoryGrid = document.querySelector(`.color-category[data-category="${category}"] .links-grid`);
+
+            if (targetCategoryGrid) {
+                targetCategoryGrid.appendChild(newIcon);
+                addIconForm.reset();
+                iconCustomBgColorInput.value = '#cccccc';
+                iconCategorySelect.value = "";
+
+                filterLinks();
+                updateQuickResults(searchInput.value.toLowerCase().trim());
+            } else {
+                console.error(`Erro: A grade da categoria "${category}" não foi encontrada.`);
+            }
+        });
+
+        // Inicializa o tema e os filtros quando a página é carregada
+        document.addEventListener('DOMContentLoaded', () => {
+            applyTheme();
+            // Garante que o botão "Digite Aqui" esteja ativo por padrão na carga
+            if (quickSearchTrigger) {
+                quickSearchTrigger.classList.add('active');
+            }
+            // Na carga inicial, exibe todas as categorias, já que não há filtro ativo.
+            allCategoryDivs.forEach(categoryDiv => {
+                categoryDiv.style.display = 'block';
+            });
+            filterLinks(); // Chama filterLinks para garantir que a pesquisa inicial esteja correta
+        });
+    </script>
+</body>
+</html>
+
