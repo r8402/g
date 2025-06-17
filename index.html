@@ -16,16 +16,13 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            /* Ajustado padding-top para compensar a nova barra fixa superior compacta */
-            padding: 20px 20px 120px 20px; /* Removido o padding-top de 80px */
+            padding: 20px 20px 120px 20px;
             transition: background-color .3s ease, color .3s ease;
             position: relative;
         }
-        /* Classe para desativar a rolagem do corpo */
         body.no-scroll {
             overflow: hidden;
         }
-        /* Classe para o modo escuro */
         body.dark-mode {
             background-color: #2c2c2c;
             color: #e0e0e0;
@@ -39,28 +36,27 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-color: rgba(0, 0, 0, 0.85); /* Fundo preto semi-transparente */
-            z-index: 999; /* Abaixo da barra flutuante (z-index: 1000) */
-            backdrop-filter: blur(3px); /* Efeito de desfoque */
+            background-color: rgba(0, 0, 0, 0.85);
+            z-index: 999;
+            backdrop-filter: blur(3px);
             transition: opacity 0.3s ease;
             opacity: 1;
         }
         body:not(.search-active)::before {
             opacity: 0;
-            pointer-events: none; /* Desativa interações quando invisível */
+            pointer-events: none;
         }
 
         /* Oculta e desabilita interações no conteúdo principal quando a pesquisa está ativa */
-        .category-container, #add-icon-section {
+        .category-container, #generate-icon-code-section {
             transition: opacity 0.3s ease, visibility 0.3s ease;
         }
         body.search-active .category-container,
-        body.search-active #add-icon-section {
+        body.search-active #generate-icon-code-section {
             opacity: 0;
             visibility: hidden;
-            pointer-events: none; /* Impede cliques */
+            pointer-events: none;
         }
-        /* Também ocultar a barra superior quando a pesquisa está ativa */
         body.search-active #top-fixed-bar {
             opacity: 0;
             visibility: hidden;
@@ -74,14 +70,14 @@
             top: 0;
             left: 0;
             width: 100%;
-            background-color: #ffffff; /* Fundo branco para a barra */
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1); /* Sombra suave */
-            z-index: 999; /* Garante que fique acima de outros elementos */
-            padding: 5px 0; /* Espaçamento interno mais compacto */
+            background-color: #ffffff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 999;
+            padding: 5px 0;
             display: flex;
             justify-content: center;
             align-items: center;
-            box-sizing: border-box; /* Inclui padding no width total */
+            box-sizing: border-box;
             transition: background-color .3s ease, box-shadow .3s ease;
         }
 
@@ -106,7 +102,7 @@
 
         /* Container para os resultados rápidos */
         #quick-results-container {
-            display: none; /* Começa escondido */
+            display: none;
             width: 100%;
             background-color: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(5px);
@@ -127,19 +123,19 @@
             display: flex;
             gap: 10px;
             overflow-x: auto;
-            padding: 5px; /* Espaço para a barra de rolagem não ficar colada */
-            -webkit-overflow-scrolling: touch; /* Suaviza rolagem em iOS */
+            padding: 5px;
+            -webkit-overflow-scrolling: touch;
         }
         
         /* Estilo para os ícones dentro da barra de resultados rápidos */
         .quick-result-item {
-            box-sizing: border-box; /* Garante que padding e border não aumentem o tamanho final */
-            width: 90px; /* Tamanho fixo para padronização */
-            height: 90px; /* Tamanho fixo para padronização */
-            min-width: 90px; /* Garante que não fiquem menores */
+            box-sizing: border-box;
+            width: 90px;
+            height: 90px;
+            min-width: 90px;
             flex-shrink: 0;
-            flex-grow: 0;   /* Não permite que o item cresça */
-            flex-basis: auto; /* Deixa o flex-basis se ajustar com o width fixo */
+            flex-grow: 0;
+            flex-basis: auto;
         }
         .quick-result-item .icon-label {
             font-size: 0.9em !important;
@@ -211,10 +207,10 @@
         }
         .categories {
             display: flex;
-            flex-wrap: nowrap; /* Impede que os itens quebrem em várias linhas */
-            overflow-x: auto; /* Adiciona rolagem horizontal se necessário */
-            -webkit-overflow-scrolling: touch; /* Suaviza rolagem em iOS */
-            justify-content: flex-start; /* Alinha os itens à esquerda para rolagem */
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            justify-content: flex-start;
             gap: 3px;
             margin-bottom: 0;
             width: 100%;
@@ -232,8 +228,8 @@
             cursor: pointer;
             transition: all .3s ease;
             box-shadow: 0 2px 5px rgba(0,0,0,.1);
-            white-space: nowrap; /* Garante que o texto não quebre */
-            flex-shrink: 0; /* Impede que os botões encolham */
+            white-space: nowrap;
+            flex-shrink: 0;
         }
         body.dark-mode .category-button {
             background-color: #444;
@@ -266,12 +262,12 @@
         }
         /* Estilo para o botão "Digite Aqui" (também ajustado) */
         #quick-search-trigger {
-            background-color: #007bff; /* Cor primária */
+            background-color: #007bff;
             color: #fff;
             border: 1px solid #007bff;
             padding: 4px 9px;
             border-radius: 12.5px;
-            font-size: 0.7128rem; /* Ajustado para 10% a mais */
+            font-size: 0.7128rem;
             font-weight: 500;
             cursor: pointer;
             transition: all .3s ease;
@@ -334,15 +330,14 @@
             color: #007bff;
             border-bottom-color: rgba(255, 255, 255, 0.1);
         }
-        /* Ajuste para sempre 3 colunas em mobile e auto-adaptável para tablets/PCs */
         .links-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); /* Adapta-se automaticamente com tamanho mínimo de 100px */
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
             gap: 15px;
             justify-items: center;
         }
         .icon-item {
-            box-sizing: border-box; /* Garante que padding e border não aumentem o tamanho final */
+            box-sizing: border-box;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -353,15 +348,14 @@
             color: #fff;
             overflow: hidden;
             transition: transform .2s ease-in-out, opacity .3s ease, background-color .3s ease;
-            width: 100px; /* Tamanho fixo para padronização */
-            height: 100px; /* Tamanho fixo para padronização */
-            min-width: 100px; /* Garante que não fiquem menores */
+            width: 100px;
+            height: 100px;
+            min-width: 100px;
             aspect-ratio: 1 / 1;
             position: relative;
-            opacity: 1; /* Default visible state */
-            transform: translateY(0); /* Default visible state */
+            opacity: 1;
+            transform: translateY(0);
         }
-        /* Classes para controle de visibilidade via JS */
         .icon-item.hidden {
             opacity: 0;
             transform: scale(0.8);
@@ -415,8 +409,8 @@
             background-color: var(--icon-background-color);
         }
 
-        /* Estilos para o formulário de adição de ícone */
-        #add-icon-section {
+        /* Estilos para a seção de geração de código do ícone */
+        #generate-icon-code-section {
             width: 90%;
             max-width: 600px;
             margin: 40px auto;
@@ -427,12 +421,12 @@
             border-top: 5px solid #007bff;
             transition: background-color .3s ease, border-top-color .3s ease, box-shadow .3s ease;
         }
-        body.dark-mode #add-icon-section {
+        body.dark-mode #generate-icon-code-section {
             background-color: #3a3a3a;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
             border-top-color: #0056b3;
         }
-        #add-icon-section h2 {
+        #generate-icon-code-section h2 {
             text-align: center;
             color: #0056b3;
             margin-top: 0;
@@ -442,7 +436,7 @@
             padding-bottom: 10px;
             transition: color .3s ease, border-bottom-color .3s ease;
         }
-        body.dark-mode #add-icon-section h2 {
+        body.dark-mode #generate-icon-code-section h2 {
             color: #007bff;
             border-bottom-color: rgba(255,255,255,0.1);
         }
@@ -494,7 +488,7 @@
             border-color: #555;
             background-color: #3c3c3c;
         }
-        #add-icon-button {
+        #generate-icon-code-button, #copy-icon-code-button {
             width: 100%;
             padding: 12px 15px;
             background-color: #007bff;
@@ -505,14 +499,15 @@
             cursor: pointer;
             transition: background-color .3s ease;
             font-weight: 500;
+            margin-top: 10px; /* Espaço entre os botões e entre o form e o textarea */
         }
-        #add-icon-button:hover {
+        #generate-icon-code-button:hover, #copy-icon-code-button:hover {
             background-color: #0056b3;
         }
-        body.dark-mode #add-icon-button {
+        body.dark-mode #generate-icon-code-button, body.dark-mode #copy-icon-code-button {
             background-color: #0056b3;
         }
-        body.dark-mode #add-icon-button:hover {
+        body.dark-mode #generate-icon-code-button:hover, body.dark-mode #copy-icon-code-button:hover {
             background-color: #004a8f;
         }
         .label-hint {
@@ -523,47 +518,69 @@
         body.dark-mode .label-hint {
             color: #bbb;
         }
+        #generatedCodeOutput {
+            width: 100%;
+            min-height: 150px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-top: 25px;
+            box-sizing: border-box;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9em;
+            background-color: #e9ecef;
+            color: #212529;
+            resize: vertical;
+            transition: border-color .3s ease, background-color .3s ease, color .3s ease;
+        }
+        body.dark-mode #generatedCodeOutput {
+            background-color: #2c2c2c;
+            border-color: #555;
+            color: #e0e0e0;
+        }
+        #copy-icon-code-button {
+            margin-top: 15px;
+        }
 
         /* Media Queries para responsividade */
-        @media (max-width: 768px) { /* Celulares e telas menores */
+        @media (max-width: 768px) {
             .category-container {
                 grid-template-columns: 1fr;
             }
             .color-category {
-                padding: 15px; /* Padding um pouco reduzido */
-            }
-            .color-category h2 {
-                font-size: 1.4em; /* Títulos menores */
-            }
-            .links-grid {
-                grid-template-columns: repeat(3, 1fr); /* Força 3 colunas iguais */
-                gap: 10px; /* Espaçamento menor */
-            }
-            .icon-item {
-                width: 90px; /* Tamanho fixo para todos os ícones em mobile */
-                height: 90px; /* Tamanho fixo para todos os ícones em mobile */
-                min-width: 90px; /* Garante que não fiquem menores */
-                max-width: 90px; /* Garante que não fiquem maiores */
-            }
-            /* Ajusta os itens na barra de resultados rápidos para mobile */
-            .quick-result-item {
-                width: 90px !important; /* Tamanho fixo para todos os resultados rápidos em mobile */
-                height: 90px !important; /* Tamanho fixo para todos os resultados rápidos em mobile */
-                min-width: 90px;
-                max-width: 90px;
-                flex-basis: auto; /* Deixa flex-basis adaptar */
-            }
-            .icon-label, .quick-result-item .icon-label {
-                font-size: 0.75em !important; /* Fonte menor para os rótulos dos ícones */
-            }
-            #add-icon-section {
                 padding: 15px;
             }
-            #add-icon-section h2 {
+            .color-category h2 {
+                font-size: 1.4em;
+            }
+            .links-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+            }
+            .icon-item {
+                width: 90px;
+                height: 90px;
+                min-width: 90px;
+                max-width: 90px;
+            }
+            .quick-result-item {
+                width: 90px !important;
+                height: 90px !important;
+                min-width: 90px;
+                max-width: 90px;
+                flex-basis: auto;
+            }
+            .icon-label, .quick-result-item .icon-label {
+                font-size: 0.75em !important;
+            }
+            #generate-icon-code-section {
+                padding: 15px;
+            }
+            #generate-icon-code-section h2 {
                 font-size: 1.4em;
             }
             #quick-results-content {
-                gap: 10px; /* Garante o mesmo gap para resultados rápidos */
+                gap: 10px;
             }
         }
     </style>
@@ -661,7 +678,7 @@
                         <div class="icon-label">Aprenda Mais</div>
                     </div>
                 </a>
-<a href="https://www.pciconcursos.com.br/concursos/#BA" class="icon-item concursos" data-label="PCI Concurso">
+                <a href="https://www.pciconcursos.com.br/concursos/#BA" class="icon-item concursos" data-label="PCI Concurso">
                     <div class="icon-content">
                         <div class="icon-label">PCI Concurso</div>
                     </div>
@@ -928,9 +945,9 @@
         </div>
     </div>
 
-    <div id="add-icon-section">
-        <h2>Adicionar Novo Ícone</h2>
-        <form id="add-icon-form">
+    <div id="generate-icon-code-section">
+        <h2>Gerar Código HTML da Página Completa com Novo Ícone</h2>
+        <form id="generate-icon-code-form">
             <div class="form-group">
                 <label for="iconNameInput">Texto do Ícone:</label>
                 <input type="text" id="iconNameInput" required>
@@ -948,7 +965,7 @@
                 <input type="color" id="iconCustomBgColorInput" value="#cccccc">
             </div>
             <div class="form-group">
-                <label for="iconCategorySelect">Categoria:</label>
+                <label for="iconCategorySelect">Categoria Onde Adicionar:</label>
                 <select id="iconCategorySelect" required>
                     <option value="" disabled selected>Selecione uma categoria</option>
                     <option value="servicos-utilidades">Serviços & Utilidades</option>
@@ -959,8 +976,10 @@
                     <option value="midia-entretenimento">Mídia & Entretenimento</option>
                 </select>
             </div>
-            <button type="submit" id="add-icon-button">Adicionar Ícone</button>
+            <button type="button" id="generate-icon-code-button">Gerar Código do Ícone</button>
         </form>
+        <textarea id="generatedCodeOutput" readonly placeholder="O código HTML completo da página com o novo ícone aparecerá aqui..."></textarea>
+        <button type="button" id="copy-icon-code-button">Copiar Código</button>
     </div>
 
     <div id="floating-bar-wrapper">
@@ -985,12 +1004,16 @@
         const quickResultsContent = document.getElementById('quick-results-content');
         const quickSearchTrigger = document.getElementById('quick-search-trigger');
 
-        const addIconForm = document.getElementById('add-icon-form');
+        // Elementos para a funcionalidade de geração de código
+        const generateIconCodeForm = document.getElementById('generate-icon-code-form');
         const iconNameInput = document.getElementById('iconNameInput');
         const iconLinkInput = document.getElementById('iconLinkInput');
         const iconColorClassInput = document.getElementById('iconColorClassInput');
         const iconCustomBgColorInput = document.getElementById('iconCustomBgColorInput');
         const iconCategorySelect = document.getElementById('iconCategorySelect');
+        const generateCodeButton = document.getElementById('generate-icon-code-button');
+        const generatedCodeOutput = document.getElementById('generatedCodeOutput');
+        const copyCodeButton = document.getElementById('copy-icon-code-button');
 
         let currentActiveCategory = 'all'; 
         let typingTimer;
@@ -1019,7 +1042,7 @@
                 localStorage.setItem('theme', 'dark');
                 themeToggle.textContent = 'Modo Claro';
             } else {
-                localStorage.setItem('light');
+                localStorage.setItem('theme', 'light');
                 themeToggle.textContent = 'Modo Escuro';
             }
         }
@@ -1067,17 +1090,16 @@
 
             if (searchTerm.length === 0) {
                 quickResultsContainer.style.display = 'none';
-                body.classList.remove('no-scroll'); // Reativa a rolagem
-                body.classList.remove('search-active'); // Remove a sobreposição preta
+                body.classList.remove('no-scroll');
+                body.classList.remove('search-active');
                 return;
             }
             
             quickResultsContainer.style.display = 'block';
-            body.classList.add('no-scroll'); // Desativa a rolagem
-            body.classList.add('search-active'); // Adiciona a sobreposição preta
+            body.classList.add('no-scroll');
+            body.classList.add('search-active');
 
             let found = false;
-            // Seleciona todos os ícones da grade principal (incluindo os potencialmente escondidos pelo filtro de categoria)
             const allIcons = document.querySelectorAll('#allCategoriesGrid .icon-item');
 
             allIcons.forEach(item => {
@@ -1106,21 +1128,17 @@
             event.currentTarget.classList.add('active');
             currentActiveCategory = event.currentTarget.getAttribute('data-category');
             
-            // Se o botão clicado for "Digite Aqui", foca na barra de pesquisa e ativa a sobreposição
             if (event.currentTarget.id === 'quick-search-trigger') {
                 searchInput.focus();
-                // Quando o "Digite Aqui" é clicado, garantimos que todas as categorias são visíveis.
                 allCategoryDivs.forEach(categoryDiv => {
                     categoryDiv.style.display = 'block';
                 });
             } else {
-                // Se for outro botão de categoria, limpa a pesquisa e desativa a sobreposição
-                searchInput.value = ''; // Limpa o campo de pesquisa
-                quickResultsContainer.style.display = 'none'; // Esconde os resultados rápidos
-                body.classList.remove('no-scroll'); // Reativa a rolagem
-                body.classList.remove('search-active'); // Remove a sobreposição preta
+                searchInput.value = '';
+                quickResultsContainer.style.display = 'none';
+                body.classList.remove('no-scroll');
+                body.classList.remove('search-active');
 
-                // Quando outra categoria é clicada, filtra e esconde as que não correspondem
                 allCategoryDivs.forEach(categoryDiv => {
                     const categoryDivName = categoryDiv.getAttribute('data-category');
                     if (categoryDivName === currentActiveCategory) {
@@ -1142,10 +1160,9 @@
             setTimeout(() => {
                 allCategoriesGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }, 300);
-            body.classList.add('search-active'); // Ativa a sobreposição preta ao focar
-            body.classList.add('no-scroll'); // Desativa a rolagem
+            body.classList.add('search-active');
+            body.classList.add('no-scroll');
 
-            // Quando o input de pesquisa é focado, garantimos que todas as categorias são visíveis.
             allCategoryDivs.forEach(categoryDiv => {
                 categoryDiv.style.display = 'block';
             });
@@ -1167,12 +1184,10 @@
         
         searchInput.addEventListener('blur', () => {
             setTimeout(() => {
-                // Se o campo de busca estiver vazio ao perder o foco, esconde os resultados rápidos e remove a sobreposição
                 if(searchInput.value.trim().length === 0) {
                     quickResultsContainer.style.display = 'none';
                     body.classList.remove('no-scroll');
                     body.classList.remove('search-active');
-                    // E se o botão ativo for "Digite Aqui", mostra todas as categorias novamente.
                     if (quickSearchTrigger.classList.contains('active')) {
                          allCategoryDivs.forEach(categoryDiv => {
                             categoryDiv.style.display = 'block';
@@ -1186,8 +1201,10 @@
             button.addEventListener('click', handleCategoryClick);
         });
 
-        // Event listener para o formulário de adição de ícone
-        addIconForm.addEventListener('submit', function(event) {
+        /**
+         * Gera o código HTML completo da página com o novo ícone incluído temporariamente.
+         */
+        generateCodeButton.addEventListener('click', function(event) {
             event.preventDefault();
 
             const name = iconNameInput.value.trim();
@@ -1197,45 +1214,69 @@
             const category = iconCategorySelect.value;
 
             if (!name || !link || !category) {
-                console.error('Por favor, preencha todos os campos obrigatórios: Nome, Link e Categoria.');
+                generatedCodeOutput.value = 'Por favor, preencha todos os campos obrigatórios: Texto do Ícone, Link do Ícone e Categoria Onde Adicionar.';
                 return;
             }
 
-            const newIcon = document.createElement('a');
-            newIcon.href = link;
-            newIcon.classList.add('icon-item');
-            newIcon.dataset.label = name;
-
+            // Construir o HTML do novo ícone
+            let newIconHtml = `                <a href="${link}" class="icon-item`;
             if (colorClass) {
-                newIcon.classList.add(colorClass);
+                newIconHtml += ` ${colorClass}"`;
             } else {
-                newIcon.classList.add('custom-icon-color');
-                newIcon.style.setProperty('--icon-background-color', customBgColor);
+                newIconHtml += ` custom-icon-color"`;
             }
+            newIconHtml += ` data-label="${name}">
+                    <div class="icon-content"`;
+            if (!colorClass) {
+                newIconHtml += ` style="--icon-background-color: ${customBgColor}; background-color: var(--icon-background-color);"`;
+            }
+            newIconHtml += `>
+                        <div class="icon-label">${name}</div>
+                    </div>
+                </a>`;
 
-            const iconContent = document.createElement('div');
-            iconContent.classList.add('icon-content');
-
-            const iconLabel = document.createElement('div');
-            iconLabel.classList.add('icon-label');
-            iconLabel.textContent = name;
-
-            iconContent.appendChild(iconLabel);
-            newIcon.appendChild(iconContent);
-
+            // Encontrar a grade de links da categoria no DOM atual
             const targetCategoryGrid = document.querySelector(`.color-category[data-category="${category}"] .links-grid`);
 
-            if (targetCategoryGrid) {
-                targetCategoryGrid.appendChild(newIcon);
-                addIconForm.reset();
-                iconCustomBgColorInput.value = '#cccccc';
-                iconCategorySelect.value = "";
-
-                filterLinks();
-                updateQuickResults(searchInput.value.toLowerCase().trim());
-            } else {
-                console.error(`Erro: A grade da categoria "${category}" não foi encontrada.`);
+            if (!targetCategoryGrid) {
+                generatedCodeOutput.value = `Erro: A grade da categoria "${category}" não foi encontrada no DOM atual. Verifique a categoria selecionada.`;
+                return;
             }
+
+            // Criar um elemento temporário para o novo ícone
+            // Isso permite que ele seja inserido e então o outerHTML seja capturado
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = newIconHtml.trim();
+            const newIconElement = tempDiv.firstChild; // O elemento 'a'
+
+            // Temporariamente adicionar o novo ícone ao DOM
+            targetCategoryGrid.appendChild(newIconElement);
+
+            // Obter o HTML completo atualizado do documento (incluindo o novo ícone)
+            const fullPageHtml = document.documentElement.outerHTML;
+
+            // Remover o ícone temporário do DOM para não alterar a visualização ao vivo
+            newIconElement.remove();
+
+            // Exibir o HTML completo na textarea
+            generatedCodeOutput.value = fullPageHtml;
+            generatedCodeOutput.focus();
+            generatedCodeOutput.select(); // Selecionar o texto para facilitar a cópia
+            
+            // Opcional: Limpar o formulário após a geração
+            generateIconCodeForm.reset();
+            iconCustomBgColorInput.value = '#cccccc'; // Resetar a cor para o padrão
+        });
+
+        /**
+         * Copia o conteúdo da textarea de código gerado para a área de transferência.
+         */
+        copyCodeButton.addEventListener('click', function() {
+            generatedCodeOutput.select();
+            generatedCodeOutput.setSelectionRange(0, 99999); // Para dispositivos móveis
+            document.execCommand('copy');
+            // Substitua alert() por um modal customizado em um ambiente de produção real
+            alert('Código copiado para a área de transferência!');
         });
 
         // Inicializa o tema e os filtros quando a página é carregada
@@ -1249,8 +1290,9 @@
             allCategoryDivs.forEach(categoryDiv => {
                 categoryDiv.style.display = 'block';
             });
-            filterLinks(); // Chama filterLinks para garantir que a pesquisa inicial esteja correta
+            filterLinks();
         });
     </script>
 </body>
 </html>
+
