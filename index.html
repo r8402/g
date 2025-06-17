@@ -17,7 +17,7 @@
             flex-direction: column;
             align-items: center;
             /* Ajustado padding-top para compensar a nova barra fixa superior compacta */
-            padding: 80px 20px 120px 20px; /* Reduzido para acomodar a barra mais compacta */
+            padding: 20px 20px 120px 20px; /* Removido o padding-top de 80px */
             transition: background-color .3s ease, color .3s ease;
             position: relative;
         }
@@ -569,16 +569,7 @@
     </style>
 </head>
 <body>
-    <div id="top-fixed-bar">
-        <nav class="categories">
-            <button id="quick-search-trigger" class="category-button active" data-category="all">Digite Aqui</button>
-            <button class="category-button" data-category="cursos-concursos">Cursos & Concursos</button>
-            <button class="category-button" data-category="ferramentas-downloads">Ferramentas & Downloads</button>
-            <button class="category-button" data-category="compras-produtividade">Compras & Produtividade</button>
-            <button class="category-button" data-category="design-audio">Design & Áudio</button>
-            <button class="category-button" data-category="midia-entretenimento">Mídia & Entretenimento</button>
-        </nav>
-    </div>
+    
 
     <div class="category-container" id="allCategoriesGrid">
         <div class="color-category" style="border-color: #6f42c1;" data-category="servicos-utilidades">
@@ -932,7 +923,6 @@
         </div>
     </div>
 
-    <!-- Formulário para adicionar novos ícones -->
     <div id="add-icon-section">
         <h2>Adicionar Novo Ícone</h2>
         <form id="add-icon-form">
@@ -968,7 +958,6 @@
         </form>
     </div>
 
-    <!-- Container flutuante que engloba a barra de resultados e a de pesquisa -->
     <div id="floating-bar-wrapper">
         <div id="quick-results-container">
             <div id="quick-results-content"></div>
@@ -1260,4 +1249,3 @@
     </script>
 </body>
 </html>
-
