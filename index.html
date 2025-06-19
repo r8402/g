@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="pt-BR"><head>
+<html lang="pt-BR">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gratuitos!</title>
@@ -566,7 +567,7 @@
         }
     </style>
 </head>
-<body class="modal-open">
+<body>
 
     <div class="category-container" id="allCategoriesGrid">
         <!-- Todas as categorias de ícones permanecem aqui, como no original -->
@@ -926,8 +927,8 @@
     </div>
 
     <!-- Modal do Gerador de Código -->
-    <div id="generator-modal-overlay" class="visible"></div>
-    <div id="generate-icon-code-section" class="visible">
+    <div id="generator-modal-overlay"></div>
+    <div id="generate-icon-code-section">
         <button id="close-generator-modal-btn">×</button>
         <h2>Gerar Código com Novo Ícone</h2>
         <form id="generate-icon-code-form">
@@ -1139,9 +1140,21 @@
                 return;
             }
 
+            // Temporariamente remove os elementos do modal do DOM para que não apareçam no código gerado
+            const modalElements = document.querySelectorAll('#generator-modal-overlay, #generate-icon-code-section');
+            modalElements.forEach(el => el.style.setProperty('display', 'none', 'important'));
+
+            // Adiciona o novo ícone para capturar o HTML completo
             targetCategoryGrid.appendChild(newIconElement);
+            
+            // Gera o HTML da página inteira
             const fullPageHtml = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+            
+            // Remove o ícone temporário
             newIconElement.remove();
+
+            // Restaura a exibição dos elementos do modal
+            modalElements.forEach(el => el.style.display = '');
 
             generatedCodeOutput.value = fullPageHtml;
             generatedCodeOutput.focus();
@@ -1225,6 +1238,6 @@
         });
     </script>
 
+</body>
+</html>
 
-
-</body></html>
