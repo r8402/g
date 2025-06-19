@@ -1121,7 +1121,7 @@
                 generatedCodeOutput.value = 'Por favor, preencha todos os campos obrigatórios.';
                 return;
             }
-
+            
             let newIconHtml = `                <a href="${link}" class="icon-item`;
             newIconHtml += colorClass ? ` ${colorClass}"` : ` custom-icon-color"`;
             newIconHtml += ` data-label="${name}" target="_blank">\n                    <div class="icon-content"`;
@@ -1130,31 +1130,36 @@
             }
             newIconHtml += `>\n                        <div class="icon-label">${name}</div>\n                    </div>\n                </a>`;
 
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = newIconHtml;
-            const newIconElement = tempDiv.firstElementChild;
-            
             const targetCategoryGrid = document.querySelector(`.color-category[data-category="${category}"] .links-grid`);
-            if (!targetCategoryGrid) {
+             if (!targetCategoryGrid) {
                 generatedCodeOutput.value = `Erro: A categoria "${category}" não foi encontrada.`;
                 return;
             }
 
-            // Temporariamente remove os elementos do modal do DOM para que não apareçam no código gerado
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = newIconHtml;
+            const newIconElement = tempDiv.firstElementChild;
+            
+            // --- INÍCIO DA CORREÇÃO ---
+            // 1. Guarda o estado original da página
+            const originalBodyClasses = body.className;
             const modalElements = document.querySelectorAll('#generator-modal-overlay, #generate-icon-code-section');
-            modalElements.forEach(el => el.style.setProperty('display', 'none', 'important'));
 
-            // Adiciona o novo ícone para capturar o HTML completo
+            // 2. Prepara o DOM para a captura: remove classes de bloqueio e visibilidade do modal.
+            body.className = originalBodyClasses.replace(/modal-open|no-scroll|search-active/g, '').trim();
+            modalElements.forEach(el => el.classList.remove('visible'));
+
+            // 3. Adiciona o novo ícone para que ele faça parte do HTML capturado.
             targetCategoryGrid.appendChild(newIconElement);
-            
-            // Gera o HTML da página inteira
-            const fullPageHtml = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
-            
-            // Remove o ícone temporário
-            newIconElement.remove();
 
-            // Restaura a exibição dos elementos do modal
-            modalElements.forEach(el => el.style.display = '');
+            // 4. Captura o código HTML completo da página agora "limpa".
+            const fullPageHtml = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+
+            // 5. Restaura o estado original da página para o usuário não notar a mudança.
+            targetCategoryGrid.removeChild(newIconElement); // Remove o ícone temporário
+            body.className = originalBodyClasses; // Devolve as classes originais ao body
+            modalElements.forEach(el => el.classList.add('visible')); // Garante que o modal continue visível
+            // --- FIM DA CORREÇÃO ---
 
             generatedCodeOutput.value = fullPageHtml;
             generatedCodeOutput.focus();
