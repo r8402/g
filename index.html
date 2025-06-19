@@ -1,7 +1,5 @@
-
 <!DOCTYPE html>
-<html lang="pt-BR">
-<head>
+<html lang="pt-BR"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gratuitos!</title>
@@ -568,7 +566,7 @@
         }
     </style>
 </head>
-<body>
+<body class="dark-mode">
 
     <div class="category-container" id="allCategoriesGrid">
         <!-- Todas as categorias de ícones permanecem aqui, como no original -->
@@ -766,9 +764,13 @@
                         <div class="icon-label">GitHub</div>
                     </div>
                 </a>
-            <a href="https://htmlonline.org/pt/" class="icon-item custom-icon-color" data-label="EDITAR HTML" target="_blank">
+            <a href="https://htmlonline.org/pt/" class="icon-item custom-icon-color showing" data-label="EDITAR HTML" target="_blank">
                     <div class="icon-content" style="--icon-background-color: #1f2020; background-color: var(--icon-background-color);">
                         <div class="icon-label">EDITAR HTML</div>
+                    </div>
+                </a><a href="https://github.com/r8402/g/edit/main/index.html" class="icon-item custom-icon-color" data-label="APLICAR" target="_blank">
+                    <div class="icon-content" style="--icon-background-color: #050505; background-color: var(--icon-background-color);">
+                        <div class="icon-label">APLICAR</div>
                     </div>
                 </a></div>
         </div>
@@ -929,8 +931,8 @@
     </div>
 
     <!-- Modal do Gerador de Código -->
-    <div id="generator-modal-overlay"></div>
-    <div id="generate-icon-code-section">
+    <div id="generator-modal-overlay" class=""></div>
+    <div id="generate-icon-code-section" class="">
         <button id="close-generator-modal-btn">×</button>
         <h2>Gerar Código com Novo Ícone</h2>
         <form id="generate-icon-code-form">
@@ -978,7 +980,7 @@
             <button id="open-generator-modal-btn" title="Gerar Código do Ícone">
                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"></path></svg>
             </button>
-            <button id="theme-toggle" title="Alternar Modo"><span>Escuro</span></button>
+            <button id="theme-toggle" title="Alternar Modo"><span>Claro</span></button>
         </div>
     </div>
     
@@ -1245,6 +1247,7 @@
         });
     </script>
 
-</body>
-</html>
 
+
+
+</body></html>
