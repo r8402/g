@@ -68,7 +68,7 @@
 
         #search-container {
             width: 100%;
-            max-width: 600px; /* Limita a largura para melhor aparência */
+            /* Removido max-width para que se expanda */
             display: flex;
             align-items: center;
             padding: 8px;
@@ -140,7 +140,7 @@
         #quick-results-container {
             display: none; /* Inicia oculto */
             width: 100%;
-            max-width: 600px;
+            /* Removido max-width para que se expanda */
             background-color: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(5px);
             border-radius: 16px;
@@ -211,9 +211,9 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 30px;
-            max-width: 1200px;
+            width: 100%; /* Permite que o container ocupe a largura total */
             margin: 75px auto 30px auto; /* Adiciona margem superior para compensar a barra fixa */
-            width: 100%;
+            /* Removido max-width para que se expanda */
         }
         .color-category {
             background-color: #ffffff;
@@ -1080,7 +1080,6 @@
                 });
                 
                 // Keep individual categories visible if they have matching links, regardless of 'main-content-hidden'
-                // The 'main-content-hidden' will handle the overall display.
                 // This part ensures internal display logic for "showing" vs "hidden" icons works.
             });
         }
