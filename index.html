@@ -7,6 +7,23 @@
     <link rel="manifest"href="manifest.json">
     <link rel="icon" href="logo1.ico" type="image/x-icon">
     <style>
+        /* Variáveis de Cores (Adicionadas para o Pop-up) */
+        :root {
+            --primary-color: #007bff;
+            --primary-hover-color: #0056b3;
+            --card-bg-color: #ffffff;
+            --text-color: #333;
+            --shadow-color: rgba(0, 0, 0, 0.15);
+            --button-secondary-bg: #e9ecef;
+        }
+        body.dark-mode {
+            /* ... estilos existentes ... */
+            --card-bg-color: #3a3a3a;
+            --text-color: #e0e0e0;
+            --shadow-color: rgba(0, 0, 0, 0.5);
+            --button-secondary-bg: #555;
+        }
+
         html {
             scroll-behavior: smooth;
         }
@@ -44,10 +61,16 @@
         #install-prompt button {
             padding: 10px 15px; border: none; border-radius: 8px; cursor: pointer;
             font-weight: bold; transition: background-color 0.2s; flex-shrink: 0;
+            white-space: nowrap; /* Impede quebras de linha em botões */
         }
         #install-prompt #install-btn { background-color: var(--primary-color); color: white; }
         #install-prompt #install-btn:hover { background-color: var(--primary-hover-color); }
         #install-prompt #close-install-btn { background-color: var(--button-secondary-bg); color: var(--text-color); }
+        #install-prompt #close-install-btn:hover { opacity: 0.8; }
+        /* Adiciona espaço na parte inferior do body para o pop-up */
+        body:has(#install-prompt.visible) {
+             padding-bottom: 75px; /* Ajuste conforme a altura do seu pop-up */
+        }
 
         /* Removidas as sobreposições e lógicas complexas para o search-active */
         body.search-active::before,
@@ -338,7 +361,7 @@
         }
         /* MODIFICATIONS END HERE */
 
-        /* Cores de ícones */
+        /* Cores de ícones (Mantenha as suas cores existentes) */
         .verde { background-color: #4caf50; } .AZUL { background-color: #2d8cff; } .azul2 { background-color: #007bff; } .verde2 { background-color: #00995d; } .codepen { background-color: #000; } .utilit { background-color: #4285f4; } .wordpress { background-color: #21759b; } .mercadolivre { background-color: #ffe600; color: #000; } .mega { background-color: #d90000; } .zoom { background-color: #2d8cff; } .cuponomia { background-color: #f26522; } .bradesco { background-color: #ee1c23; } .senai { background-color: #004a8f; } .primecursos { background-color: #f9a825; color: #000; } .baixar { background-color: #4caf50; } .canais { background-color: #f44336; } .canva { background-color: #1e1e1e; } .coelba { background-color: #00a99d; } .concursos { background-color: #673ab7; } .drive { background-color: #4285f4; } .clideo { background-color: #593993; } .embasa { background-color: #03a9f4; } .multicanaislc { background-color: #29abe2; } .onedrive { background-color: #0078d4; } .globfone { background-color: #00bcd4; } .youtube0, .youtube1 { background-color: #ff0000; } .cartacapital { background-color: #c62828; } .iconicons { background-color: #3f51b5; } .pinterest { background-color: #e60023; } .logodownload { background-color: #000; } .icons8 { background-color: #00a4e5; } .gratispng { background-color: #8bc34a; } .linkcorreios { background-color: #fdd835; color: #000; } .photoroom { background-color: #6c63ff; } .topflix { background-color: #212121; } .tsunami { background-color: #0078d4; } .meuguia { background-color: #9c27b0; } .unopar { background-color: #0070c0; } .clideoaudio { background-color: #593993; } .azarado { background-color: #ff9800; color: #000; } .feriados { background-color: #f44336; } .mercadopago { background-color: #00aee4; } .musclewiki { background-color: #004a8f; } .buscape { background-color: #673ab7; } .bloqueador { background-color: #d90000; } .vpn { background-color: #D81B60; } .gov-curso { background-color: #006400; } .whatsapp { background-color: #25d366; } .plutotv { background-color: #121212; }
         .copilot-icon {
             background-image: linear-gradient(to bottom right,#2196F3,#4CAF50,#FFEB3B,#FF9800,#9C27B0);
@@ -548,6 +571,21 @@
 
         /* Media Queries para responsividade */
         @media (max-width: 768px) {
+             /* Ajuste do Pop-up para Mobile */
+            #install-prompt {
+                 padding: 10px 15px;
+            }
+             #install-prompt p {
+                 font-size: 0.9em;
+            }
+            #install-prompt button {
+                padding: 8px 10px;
+                font-size: 0.9em;
+            }
+             body:has(#install-prompt.visible) {
+                 padding-bottom: 65px; /* Ajuste para a altura menor do pop-up em mobile */
+            }
+
             .category-container {
                 grid-template-columns: 1fr;
                 margin-top: 65px; /* Ajusta a margem superior para mobile */
@@ -601,6 +639,13 @@
 </head>
 <body class="dark-mode">
 
+    <div id="install-prompt" class="">
+        <p>Instale este site como um **aplicativo** para acesso rápido!</p>
+        <div>
+            <button id="close-install-btn">Mais tarde</button>
+            <button id="install-btn">Instalar App</button>
+        </div>
+    </div>
     <div id="top-search-bar-wrapper">
         <div id="search-container">
             <input type="text" id="search-input" placeholder="Pesquise Aqui...">
@@ -1042,6 +1087,14 @@
         const generateCodeButton = document.getElementById('generate-icon-code-button');
         const generatedCodeOutput = document.getElementById('generatedCodeOutput');
         const copyCodeButton = document.getElementById('copy-icon-code-button');
+        
+        // 🌟 NOVOS ELEMENTOS PWA 🌟
+        const installPrompt = document.getElementById('install-prompt');
+        const installBtn = document.getElementById('install-btn');
+        const closeInstallBtn = document.getElementById('close-install-btn');
+        let deferredPrompt = null;
+        // 🌟 FIM NOVOS ELEMENTOS PWA 🌟
+
 
         let typingTimer;
         const doneTypingInterval = 200; //ms
@@ -1068,8 +1121,67 @@
                 themeToggle.querySelector('span').textContent = 'Escuro';
             }
         }
+        
+        // --- 🌟 Funções do PWA 🌟 ---
 
-        // --- Funções de Pesquisa e Filtro ---
+        // 1. Captura o evento que indica que o PWA pode ser instalado.
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Previne que o mini-infobar apareça no Chrome para desktop
+            e.preventDefault();
+            // Armazena o evento para acionar mais tarde
+            deferredPrompt = e;
+            // Mostra nosso pop-up de instalação customizado
+            if (installPrompt && !localStorage.getItem('pwa-install-dismissed')) {
+                installPrompt.classList.add('visible');
+            }
+        });
+
+        // 2. Aciona o prompt de instalação nativo
+        installBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                // Esconde nosso pop-up
+                installPrompt.classList.remove('visible');
+                
+                // Mostra o prompt de instalação nativo
+                deferredPrompt.prompt();
+                
+                // Espera o usuário responder ao prompt
+                const { outcome } = await deferredPrompt.userChoice;
+                
+                // O deferredPrompt não é mais necessário
+                deferredPrompt = null;
+                
+                // Você pode fazer algo com o resultado:
+                if (outcome === 'accepted') {
+                    console.log('Usuário aceitou o prompt de instalação do PWA.');
+                } else {
+                    console.log('Usuário recusou o prompt de instalação do PWA.');
+                }
+            }
+        });
+
+        // 3. Fecha o pop-up e armazena que o usuário dispensou
+        closeInstallBtn.addEventListener('click', () => {
+            if (installPrompt) {
+                 installPrompt.classList.remove('visible');
+                 // Opcional: Armazena no localStorage para não mostrar novamente
+                 localStorage.setItem('pwa-install-dismissed', 'true');
+            }
+        });
+        
+        // 4. Se já estiver instalado, esconde o pop-up (para navegadores que suportam)
+        window.addEventListener('appinstalled', () => {
+            if (installPrompt) {
+                 installPrompt.classList.remove('visible');
+            }
+             // Armazena no localStorage para não mostrar novamente
+            localStorage.setItem('pwa-install-dismissed', 'true');
+        });
+        
+        // --- 🌟 FIM Funções do PWA 🌟 ---
+
+
+        // --- Funções de Pesquisa e Filtro (Mantidas as originais) ---
         function filterLinks() {
             const searchTerm = searchInput.value.toLowerCase().trim();
 
@@ -1170,7 +1282,7 @@
                 return;
             }
             
-            let newIconHtml = `                <a href="${link}" class="icon-item`;
+            let newIconHtml = `                <a href="${link}" class="icon-item showing`; // Adicionei 'showing' aqui
             newIconHtml += colorClass ? ` ${colorClass}"` : ` custom-icon-color"`;
             newIconHtml += ` data-label="${name}" target="_blank">\n                    <div class="icon-content"`;
             if (!colorClass) {
@@ -1194,6 +1306,10 @@
             const modalElements = document.querySelectorAll('#generator-modal-overlay, #generate-icon-code-section');
 
             // 2. Prepara o DOM para a captura: remove classes de bloqueio e visibilidade do modal.
+            // Também esconde o PWA prompt antes de capturar o HTML
+            const installPromptVisible = installPrompt.classList.contains('visible');
+            installPrompt.classList.remove('visible');
+
             body.className = originalBodyClasses.replace(/modal-open|no-scroll|search-active/g, '').trim();
             modalElements.forEach(el => el.classList.remove('visible'));
 
@@ -1207,6 +1323,9 @@
             targetCategoryGrid.removeChild(newIconElement); // Remove o ícone temporário
             body.className = originalBodyClasses; // Devolve as classes originais ao body
             modalElements.forEach(el => el.classList.add('visible')); // Garante que o modal continue visível
+             if (installPromptVisible) {
+                 installPrompt.classList.add('visible'); // Restaura a visibilidade do PWA prompt
+            }
             // --- FIM DA CORREÇÃO ---
 
             generatedCodeOutput.value = fullPageHtml;
@@ -1286,19 +1405,3 @@
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
