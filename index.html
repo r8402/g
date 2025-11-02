@@ -258,23 +258,23 @@
             /* Removido max-width para que se expanda */
         }
         .color-category {
-            background-color: #ffffff;
+            background-color: var(--card-bg-color);
             border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 4px 12px var(--shadow-color);
             padding: 25px;
             transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s, display 0.3s;
             border-top: 5px solid;
         }
         body.dark-mode .color-category {
-            background-color: #3a3a3a;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            background-color: var(--card-bg-color);
+            box-shadow: 0 4px 12px var(--shadow-color);
         }
         .color-category:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+            box-shadow: 0 8px 20px var(--shadow-color);
         }
         body.dark-mode .color-category:hover {
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 8px 20px var(--shadow-color);
         }
         .color-category h2 {
             text-align: center;
@@ -366,6 +366,7 @@
         .copilot-icon {
             background-image: linear-gradient(to bottom right,#2196F3,#4CAF50,#FFEB3B,#FF9800,#9C27B0);
         }
+        /* Cor customizada via CSS Variable */
         .custom-icon-color .icon-content {
             background-color: var(--icon-background-color);
         }
@@ -400,9 +401,9 @@
             overflow-y: auto;
             z-index: 1050;
             padding: 25px;
-            background-color: #ffffff;
+            background-color: var(--card-bg-color);
             border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 20px var(--shadow-color);
             border-top: 5px solid #007bff;
             display: none;
             opacity: 0;
@@ -416,8 +417,8 @@
         }
 
         body.dark-mode #generate-icon-code-section {
-            background-color: #3a3a3a;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            background-color: var(--card-bg-color);
+            box-shadow: 0 4px 12px var(--shadow-color);
             border-top-color: #0056b3;
         }
         #generate-icon-code-section h2 {
@@ -439,14 +440,14 @@
             position: absolute;
             top: 15px;
             right: 15px;
-            background: #e9ecef;
+            background: var(--button-secondary-bg);
             border: none;
             border-radius: 50%;
             width: 30px;
             height: 30px;
             font-size: 1.2rem;
             font-weight: bold;
-            color: #555;
+            color: var(--text-color);
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -474,7 +475,7 @@
             display: block;
             margin-bottom: 6px;
             font-weight: 500;
-            color: #333;
+            color: var(--text-color);
             transition: color .3s ease;
         }
         body.dark-mode .form-group label {
@@ -489,8 +490,8 @@
             border-radius: 8px;
             box-sizing: border-box;
             font-size: 1em;
-            background-color: #fff;
-            color: #333;
+            background-color: var(--card-bg-color);
+            color: var(--text-color);
             transition: border-color .3s ease, background-color .3s ease, color .3s ease;
         }
         body.dark-mode .form-group input[type="text"],
@@ -508,7 +509,7 @@
             border-radius: 8px;
             box-sizing: border-box;
             cursor: pointer;
-            background-color: #fff;
+            background-color: var(--card-bg-color);
             transition: border-color .3s ease, background-color .3s ease;
         }
         body.dark-mode .form-group input[type="color"] {
@@ -518,7 +519,7 @@
         #generate-icon-code-button, #copy-icon-code-button {
             width: 100%;
             padding: 12px 15px;
-            background-color: #007bff;
+            background-color: var(--primary-color);
             color: white;
             border: none;
             border-radius: 8px;
@@ -529,7 +530,7 @@
             margin-top: 10px;
         }
         #generate-icon-code-button:hover, #copy-icon-code-button:hover {
-            background-color: #0056b3;
+            background-color: var(--primary-hover-color);
         }
         body.dark-mode #generate-icon-code-button, body.dark-mode #copy-icon-code-button {
             background-color: #0056b3;
@@ -642,7 +643,7 @@
     <div id="install-prompt" class="">
         <p>Instale este aplicativo clicando aqui! 👉</p>
         <div>
-            
+            <button id="close-install-btn">Fechar</button>
             <button id="install-btn">Instalar Agora</button>
         </div>
     </div>
@@ -1301,7 +1302,7 @@
             const newIconElement = tempDiv.firstElementChild;
             
             // --- INÍCIO DA CORREÇÃO ---
-            // 1. Guarda o estado original da página
+            // 1. Guarda o estado original da página e dos modais
             const originalBodyClasses = body.className;
             const modalElements = document.querySelectorAll('#generator-modal-overlay, #generate-icon-code-section');
 
@@ -1309,13 +1310,14 @@
             // Também esconde o PWA prompt antes de capturar o HTML
             const installPromptVisible = installPrompt.classList.contains('visible');
             installPrompt.classList.remove('visible');
-
+            
+            // Remove classes que bloqueiam ou alteram a visualização
             body.className = originalBodyClasses.replace(/modal-open|no-scroll|search-active/g, '').trim();
             modalElements.forEach(el => el.classList.remove('visible'));
 
             // 3. Adiciona o novo ícone para que ele faça parte do HTML capturado.
             targetCategoryGrid.appendChild(newIconElement);
-
+            
             // 4. Captura o código HTML completo da página agora "limpa".
             const fullPageHtml = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
 
